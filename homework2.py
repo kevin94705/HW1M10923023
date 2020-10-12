@@ -38,7 +38,7 @@ for n,l in enumerate(reader):
     Shucked_weight.append(l[5])
     Viscera_weight.append(l[6])
     Shell_weight.append(l[7])
-    Rings.append(l[8])
+    Rings.append(float(int(l[8])+1.5))
     
 dic ={'sex':sex,
       'length':length,
@@ -64,6 +64,7 @@ data_le['Shucked_weight'] = data['Shucked_weight']
 data_le['Viscera_weight'] = data['Viscera_weight']
 data_le['Shell_weight'] = data['Shell_weight']
 data_le['Rings'] = labelencoder.fit_transform(data['Rings'])
+
 #%%
 
 X = [data_le['sex'],
@@ -92,9 +93,9 @@ y_train =[]
 y_test = []
 
 #資料分割成測試和訓練
-X_train, X_test, y_train, y_test = train_test_split(X,Y,test_size=0.2,random_state=0)
+X_train, X_test, y_train, y_test = train_test_split(X,Y,test_size=0.2,random_state=1)
 #建立分類
-clf = DecisionTreeClassifier(criterion='gini',max_depth=10,max_leaf_nodes=10).fit(X_train,y_train)
+clf = DecisionTreeClassifier(criterion='gini',max_depth=5,max_leaf_nodes=5).fit(X_train,y_train)
 #修檢
 path = clf.cost_complexity_pruning_path(X_train,y_train)
 
