@@ -13,7 +13,7 @@ from sklearn import tree
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.preprocessing import LabelEncoder
-import graphviz
+
 #%%
 train_dataset = 'abalone.data'
 reader = csv.reader(open(train_dataset))
@@ -51,6 +51,12 @@ dic ={'sex':sex,
       'Rings':Rings
       }
 data=pd.DataFrame(dic)
+feature_name=[]
+for R in Rings:
+    if R not in feature_name:
+        feature_name.append(str(R))
+feature_name.sort()
+
 #%%
 from sklearn.preprocessing import LabelEncoder
 labelencoder = LabelEncoder()
@@ -64,7 +70,6 @@ data_le['Shucked_weight'] = data['Shucked_weight']
 data_le['Viscera_weight'] = data['Viscera_weight']
 data_le['Shell_weight'] = data['Shell_weight']
 data_le['Rings'] = labelencoder.fit_transform(data['Rings'])
-
 #%%
 
 X = [data_le['sex'],
@@ -99,18 +104,22 @@ clf = DecisionTreeClassifier(criterion='gini',max_depth=5,max_leaf_nodes=5).fit(
 #修檢
 path = clf.cost_complexity_pruning_path(X_train,y_train)
 
-
+tree_d = clf.get_depth()
+tree_n = clf.get_n_leaves()
 #預測
 
 test_y_predicted  = clf.predict(X_test)
 for i in range(len(test_y_predicted)):
-    print(test_y_predicted[i],y_test[i][0])
-print(clf.score(X_test,y_test))
+    with open('abalone.csv','a',newline='') as csvfile:
+            writer =csv.writer(csvfile)
+            writer.writerow([test_y_predicted[i],y_test[i][0]])
+    csvfile.close()
 
 #test_y_predicted  = clf.predict(X_test)
 #print(test_y_predicted)
 #print(y_test)
 #%%劃出決策樹
+
 feature_name = []
 class_names =[]
 for i in dic.keys():
@@ -119,9 +128,9 @@ for i in dic.keys():
 for i in range(30):
     class_names.append(str(i))
 #,out_file='tree.jpg',feature_names= feature_name,class_names = class_names,filled=True,rounded=True
-
+import graphviz
 import pydotplus
 
-dot_data = tree.export_graphviz(clf, out_file=None)
+dot_data = tree.export_graphviz(clf, out_file=None, feature_names=feature_name, class_names=feature_name)
 graph = pydotplus.graph_from_dot_data(dot_data)
-graph.write_pdf('siris.pdf')
+graph.write_pdf(f'abalone{tree_n}{tree_d}.pdf')
