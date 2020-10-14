@@ -17,10 +17,10 @@ from sklearn.preprocessing import LabelEncoder
 import graphviz
 #%%資料來源
 train_dataset = 'adult.data'
-test_dataset = 'adult.test'
+#test_dataset = 'adult.test'
 
 reader = csv.reader(open(train_dataset))
-test_reader = csv.reader(open(test_dataset))
+#test_reader = csv.reader(open(test_dataset))
 
 #%%
 
